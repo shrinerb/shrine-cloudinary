@@ -99,6 +99,9 @@ user.avatar_url(transformation: "medium")
 user.avatar_url(transformation: "large")
 ```
 
+Read [this Cloudinary section](http://cloudinary.com/documentation/rails_image_manipulation)
+for all URL options you can pass in.
+
 ### Large files
 
 If you're uploading large files with Cloudinary (like videos), you can take
