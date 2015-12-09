@@ -20,7 +20,7 @@ Cloudinary.config(
   api_key:    "...",
   api_secret: "...",
 )
-
+```
 
 You can now initialize your storage:
 
