@@ -74,10 +74,6 @@ describe Shrine::Storage::Cloudinary do
       assert_equal "foo.jpg", id
     end
 
-    it "doesn't try to modify id if it's frozen" do
-      @cloudinary.upload(image, "foo.mp4".freeze)
-    end
-
     it "uploads large files" do
       @cloudinary = cloudinary(large: 1)
       @cloudinary.upload(image, "foo.jpg")

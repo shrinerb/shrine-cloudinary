@@ -112,9 +112,7 @@ class Shrine
       end
 
       def update_id!(result, id)
-        unless resource_type == "raw" || id.frozen?
-          id.gsub!(/#{File.extname(id)}$/, ".#{result.fetch("format")}")
-        end
+        id.gsub!(/#{File.extname(id)}$/, ".#{result.fetch("format")}") unless resource_type == "raw"
       end
 
       def update_metadata!(result, metadata)
