@@ -23,10 +23,13 @@ class Shrine
         result =
           if remote?(io)
             uploader.upload(io.storage.url(io.id), **options)
-          elsif large?(io)
-            uploader.upload_large(io, chunk_size: chunk_size, **options)
           else
-            uploader.upload(io, **options)
+            io = io.download if io.is_a?(UploadedFile)
+            if large?(io)
+              uploader.upload_large(io, chunk_size: chunk_size, **options)
+            else
+              uploader.upload(io, **options)
+            end
           end
 
         update_id!(result, id)

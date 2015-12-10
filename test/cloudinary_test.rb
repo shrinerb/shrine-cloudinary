@@ -51,6 +51,14 @@ describe Shrine::Storage::Cloudinary do
       assert @cloudinary.exists?("bar.jpg")
     end
 
+    it "can upload other UploadedFiles" do
+      uploaded_file = @uploader.upload(image, location: "foo.jpg")
+      def @cloudinary.remote?(io) false end
+      @cloudinary.upload(uploaded_file, "bar.jpg")
+
+      assert @cloudinary.exists?("bar.jpg")
+    end
+
     it "updates size and dimensions" do
       metadata = {"size" => 1, "width" => 1, "height" => 1}
       @cloudinary.upload(image, "foo.jpg", metadata)
