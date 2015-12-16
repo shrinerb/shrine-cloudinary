@@ -6,11 +6,12 @@ class Shrine
     class Cloudinary
       attr_reader :prefix, :resource_type, :upload_options
 
-      def initialize(prefix: nil, large: nil, resource_type: "image", upload_options: {})
+      def initialize(prefix: nil, large: nil, resource_type: "image", store_data: nil, upload_options: {})
         @prefix = prefix
         @large = large
         @resource_type = resource_type
         @upload_options = upload_options.merge(resource_type: resource_type)
+        @store_data = store_data
       end
 
       def upload(io, id, metadata = {})
@@ -122,6 +123,7 @@ class Shrine
           "width"     => result["width"],
           "height"    => result["height"],
         }
+        retrieved_metadata["cloudinary"] = result if @store_data
         retrieved_metadata.reject! { |key, value| value.nil? }
 
         metadata.update(retrieved_metadata)

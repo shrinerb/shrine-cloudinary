@@ -129,6 +129,34 @@ If you decide to do incoming transformations (processing on upload),
 shrine-cloudinary will automatically update the extension, size, MIME type,
 width and height metadata for the uploaded file.
 
+You can choose to save the whole Cloudinary response to metadata by setting
+`:store_data` to true:
+
+```rb
+Shrine::Storage::Cloudinary.new(store_data: true, **cloudinary_options)
+```
+```rb
+user = User.create(avatar: image_file)
+user.avatar.metadata["cloudinary"] #=>
+# {
+#   "public_id" => "foo",
+#   "version" => 1450294102,
+#   "signature" => "379ab45c743951abaea38d6a18ee631af599763f",
+#   "width" => 100,
+#   "height" => 67,
+#   "format" => "jpg",
+#   "resource_type" => "image",
+#   "created_at" => "2015-12-16T19:28:22Z",
+#   "tags" => [],
+#   "bytes" => 6147,
+#   "type" => "upload",
+#   "etag" => "54b5d33d07b1dc4084d7694825371cd7",
+#   "url" => "http://res.cloudinary.com/dkjm0biaa/image/upload/v14502\n94102/foo.jpg",
+#   "secure_url" => "https://res.cloudinary.com/dkjm0biaa/image/upload/v1450294102/foo.jpg",
+#   "original_filename" => "image"
+# }
+```
+
 ### Clearing storage
 
 You can delete all files from the Cloudinary storage in the same way as you do

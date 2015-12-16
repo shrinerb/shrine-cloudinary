@@ -68,6 +68,13 @@ describe Shrine::Storage::Cloudinary do
       assert_equal 67, metadata["height"]
     end
 
+    it "stores data" do
+      @cloudinary = cloudinary(store_data: true)
+      @cloudinary.upload(image, "foo.jpg", metadata = {})
+
+      refute_empty metadata["cloudinary"]
+    end
+
     it "updates the id with the actual extension" do
       @cloudinary.upload(image, id = "foo.mp4")
       assert_equal "foo.jpg", id
