@@ -73,16 +73,14 @@ that by adding `"cloudinary"` metadata, which you can do by overriding
 ```rb
 class MyUploader < Shrine
   def extract_metadata(io, context)
-    metadata = super
-    metadata["cloudinary"] = {
+    super.update("cloudinary" => {
       format: "png",
       eager: [
         {transformation: "small"},
         {transformation: "medium"},
         {transformation: "large"},
       ]
-    }
-    metadata
+    })
   end
 end
 ```
