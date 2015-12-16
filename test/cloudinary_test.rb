@@ -37,7 +37,7 @@ describe Shrine::Storage::Cloudinary do
       assert_equal 50, metadata["width"]
     end
 
-    it "applies additional options from metadata" do
+    it "applies additional upload options from metadata" do
       metadata = {"cloudinary" => {width: 50, crop: :fit}}
       @cloudinary.upload(image, "foo.jpg", metadata)
 
@@ -59,14 +59,16 @@ describe Shrine::Storage::Cloudinary do
       assert @cloudinary.exists?("bar.jpg")
     end
 
-    it "updates size and dimensions" do
-      metadata = {"size" => 1, "width" => 1, "height" => 1}
-      @cloudinary.upload(image, "foo.jpg", metadata)
+    it "updates size, mime type and dimensions" do
+      @cloudinary.upload(image, "foo.jpg", metadata = {})
 
-      assert_equal Hash["size" => image.size, "width" => 100, "height" => 67], metadata
+      assert_equal image.size, metadata["size"]
+      assert_equal "image/jpeg", metadata["mime_type"]
+      assert_equal 100, metadata["width"]
+      assert_equal 67, metadata["height"]
     end
 
-    it "changes the extension to match the actual extension" do
+    it "updates the id with the actual extension" do
       @cloudinary.upload(image, id = "foo.mp4")
       assert_equal "foo.jpg", id
 

@@ -125,9 +125,9 @@ Shrine::Storage::Cloudinary.new(
 
 ### Metadata
 
-If you decide to do incoming transformations (processing which is done on the
-main file before it is saved to Cloudinary), shrine-cloudinary will automatically
-update format, size, width and height metadata for the uploaded file.
+If you decide to do incoming transformations (processing on upload),
+shrine-cloudinary will automatically update the extension, size, MIME type,
+width and height metadata for the uploaded file.
 
 ### Clearing storage
 

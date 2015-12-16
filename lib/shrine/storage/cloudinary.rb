@@ -116,14 +116,47 @@ class Shrine
       end
 
       def update_metadata!(result, metadata)
-        size, width, height = result.values_at("bytes", "width", "height")
-        metadata.update("size" => size)
-        metadata.update("width" => width, "height" => height) if resource_type == "image"
+        retrieved_metadata = {
+          "size"      => result["bytes"],
+          "mime_type" => MIME_TYPES[result["format"]],
+          "width"     => result["width"],
+          "height"    => result["height"],
+        }
+        retrieved_metadata.reject! { |key, value| value.nil? }
+
+        metadata.update(retrieved_metadata)
       end
 
       [:Uploader, :Downloader, :Utils, :Api].each do |name|
         define_method(name.downcase) { ::Cloudinary.const_get(name) }
       end
+
+      MIME_TYPES = {
+        # Images
+        "jpg"  => "image/jpeg",
+        "png"  => "image/png",
+        "gif"  => "image/gif",
+        "bmp"  => "image/bmp",
+        "tiff" => "image/tiff",
+        "ico"  => "image/x-icon",
+        "pdf"  => "application/pdf",
+        "eps"  => "application/postscript",
+        "psd"  => "application/octet-stream",
+        "svg"  => "image/svg+xml",
+        "webp" => "image/webp",
+
+        # Videos
+        "mp4"  => "video/mp4",
+        "flv"  => "video/x-flv",
+        "mov"  => "video/quicktime",
+        "ogv"  => "video/ogg",
+        "webm" => "video/webm",
+        "3gp"  => "video/3gpp",
+        "3g2"  => "video/3gpp2",
+        "wmv"  => "video/x-ms-wmv",
+        "mpeg" => "video/mpeg",
+        "avi"  => "video/x-msvideo",
+      }
     end
   end
 end
