@@ -35,6 +35,8 @@ class Shrine
 
         update_id!(result, id)
         update_metadata!(result, metadata)
+
+        result
       end
 
       def download(id)

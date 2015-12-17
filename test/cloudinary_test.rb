@@ -89,6 +89,12 @@ describe Shrine::Storage::Cloudinary do
 
       assert @cloudinary.exists?("foo.jpg")
     end
+
+    it "returns the data for the uploaded file" do
+      result = @cloudinary.upload(image, "foo.jpg")
+
+      assert_equal "foo", result["public_id"]
+    end
   end
 
   describe "#url" do

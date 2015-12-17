@@ -155,6 +155,9 @@ user.avatar.metadata["cloudinary"] #=>
 # }
 ```
 
+If you're using the storage directly, `Shrine::Storage::Cloudinary#upload` will
+return this hash.
+
 ### Clearing storage
 
 You can delete all files from the Cloudinary storage in the same way as you do
