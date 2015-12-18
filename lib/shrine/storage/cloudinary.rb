@@ -19,19 +19,7 @@ class Shrine
         options.update(upload_options)
         options.update(metadata.delete("cloudinary") || {})
 
-        chunk_size = options.delete(:chunk_size)
-
-        result =
-          if remote?(io)
-            uploader.upload(io.storage.url(io.id), **options)
-          else
-            io = io.download if io.is_a?(UploadedFile)
-            if large?(io)
-              uploader.upload_large(io, chunk_size: chunk_size, **options)
-            else
-              uploader.upload(io, **options)
-            end
-          end
+        result = store(io, **options)
 
         update_id!(result, id)
         update_metadata!(result, metadata)
@@ -101,6 +89,19 @@ class Shrine
       end
 
       private
+
+      def store(io, chunk_size: nil, **options)
+        if remote?(io)
+          uploader.upload(io.storage.url(io.id), **options)
+        else
+          io = io.download if io.is_a?(UploadedFile)
+          if large?(io)
+            uploader.upload_large(io, chunk_size: chunk_size, **options)
+          else
+            uploader.upload(io, **options)
+          end
+        end
+      end
 
       def type
         upload_options[:type] || "upload"
