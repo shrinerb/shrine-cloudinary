@@ -1,3 +1,4 @@
+require "shrine"
 require "cloudinary"
 require "down"
 

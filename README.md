@@ -63,42 +63,34 @@ specify `:upload_options`:
 Shrine::Storage::Cloudinary.new(upload_options: {type: "authenticated"})
 ```
 
-### Transformations
-
-Cloudinary allows you to do incoming and eager file transformations, which means
-it's possible to trigger file processing on upload. In Shrine you can leverage
-that by adding `"cloudinary"` metadata, which you can do by overriding
-`Shrine#extract_metadata`:
+You can also apply upload options dynamically per upload using the
+`upload_options` plugin, which is especially useful for doing incoming and
+eager transformations:
 
 ```rb
 class MyUploader < Shrine
-  def extract_metadata(io, context)
-    super.update("cloudinary" => {
+  plugin :upload_options, store: ->(io, context) do
+    {
       format: "png",
       eager: [
-        {transformation: "small"},
-        {transformation: "medium"},
-        {transformation: "large"},
+        {width: 500, height: 500, crop: :scale},
+        {width: 300, height: 300, crop: :crop, gravity: :south},
       ]
-    })
+    }
   end
 end
 ```
 
-The above example will trigger named transformations "small", "medium" and
-"large", which can be configured in the Cloudinary management console. This
-means that you can have different thumbnails of an image, and it's all taken
-care of by Cloudinary. When displaying the URL the view, you just need to pass
-in the version name to the uploaded file:
+### URLs
+
+You can pass transformation options to the URLs:
 
 ```rb
-user.avatar_url(transformation: "small")
-user.avatar_url(transformation: "medium")
-user.avatar_url(transformation: "large")
+user.avatar_url(width: 100, height: 100)
+user.avatar_url(width: 0.2, crop: :scale)
 ```
 
-Read [this Cloudinary section](http://cloudinary.com/documentation/rails_image_manipulation)
-for all URL options you can pass in.
+See [Rails image manipulation] for all URL options you can pass in.
 
 ### Large files
 
@@ -193,3 +185,4 @@ $ bundle exec rake test
 [Cloudinary]: http://cloudinary.com/
 [Shrine]: https://github.com/janko-m/shrine
 [Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
+[Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
