@@ -32,6 +32,10 @@ class Shrine
         Down.download(url(id))
       end
 
+      def update(id, **options)
+        uploader.explicit(public_id(id), resource_type: resource_type, type: type, **options)
+      end
+
       def move(io, id, metadata = {})
         uploader.rename(io.storage.public_id(io.id), public_id(id), resource_type: resource_type)
       end

@@ -92,27 +92,6 @@ user.avatar_url(width: 0.2, crop: :scale)
 
 See [Rails image manipulation] for all URL options you can pass in.
 
-### Large files
-
-If you're uploading large files with Cloudinary (like videos), you can take
-advantage of Cloudinary's special "chunked" upload API, by passing the filesize
-threshold after which the special API will be used:
-
-```rb
-# Upload files larger than 100 MB using the "chunked" upload API
-Shrine::Storage::Cloudinary.new(large: 100*1024*1024)
-```
-
-The default chunk size is 20 MB, but you can change that by passing
-`:chunk_size` to `:upload_options`:
-
-```rb
-Shrine::Storage::Cloudinary.new(
-  large: 100*1024*1024                      # 100 MB
-  upload_options: {chunk_size: 5*1024*1204} # 5 MB
-)
-```
-
 ### Metadata
 
 If you decide to do incoming transformations (processing on upload),
@@ -149,6 +128,39 @@ user.avatar.metadata["cloudinary"] #=>
 
 If you're using the storage directly, `Shrine::Storage::Cloudinary#upload` will
 return this hash. This is especially useful for saving [responsive breakpoints].
+
+### Large files
+
+If you're uploading large files with Cloudinary (like videos), you can take
+advantage of Cloudinary's special "chunked" upload API, by passing the filesize
+threshold after which the special API will be used:
+
+```rb
+# Upload files larger than 100 MB using the "chunked" upload API
+Shrine::Storage::Cloudinary.new(large: 100*1024*1024)
+```
+
+The default chunk size is 20 MB, but you can change that by passing
+`:chunk_size` to `:upload_options`:
+
+```rb
+Shrine::Storage::Cloudinary.new(
+  large: 100*1024*1024                      # 100 MB
+  upload_options: {chunk_size: 5*1024*1204} # 5 MB
+)
+```
+
+### Updating
+
+Sometimes you may want to apply actions to already uploaded files, e.g.
+regenerate tranformations. This storage provides the `#update` method which
+delegates to Cloudinary's [explicit API]:
+
+```rb
+cloudinary = Shrine::Storage::Cloudinary.new
+# ...
+cloudinary.update("image.jpg", eager: {...})
+```
 
 ### Clearing storage
 
@@ -187,3 +199,4 @@ $ bundle exec rake test
 [Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
+[explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit

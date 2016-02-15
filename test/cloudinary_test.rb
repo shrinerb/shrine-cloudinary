@@ -97,6 +97,15 @@ describe Shrine::Storage::Cloudinary do
     end
   end
 
+  describe "#update" do
+    it "updates the data of the file" do
+      @cloudinary.upload(image, id = "foo.jpg")
+      response = @cloudinary.update(id, tags: "foo,bar")
+
+      assert_equal ["foo", "bar"], response["tags"]
+    end
+  end
+
   describe "#url" do
     it "returns the URL with an extension" do
       assert_includes @cloudinary.url("foo.jpg"), "foo.jpg"
