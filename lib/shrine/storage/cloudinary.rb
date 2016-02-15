@@ -93,7 +93,7 @@ class Shrine
 
       def store(io, chunk_size: nil, **options)
         if remote?(io)
-          uploader.upload(io.storage.url(io.id), **options)
+          uploader.upload(io.url, **options)
         else
           io = io.download if io.is_a?(UploadedFile)
           if large?(io)
@@ -109,7 +109,7 @@ class Shrine
       end
 
       def remote?(io)
-        io.is_a?(UploadedFile) && io.storage.url(io.id) =~ /^ftp:|^https?:/
+        io.is_a?(UploadedFile) && io.url.to_s =~ /^ftp:|^https?:/
       end
 
       def large?(io)
