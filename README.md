@@ -148,7 +148,7 @@ user.avatar.metadata["cloudinary"] #=>
 ```
 
 If you're using the storage directly, `Shrine::Storage::Cloudinary#upload` will
-return this hash.
+return this hash. This is especially useful for saving [responsive breakpoints].
 
 ### Clearing storage
 
@@ -186,3 +186,4 @@ $ bundle exec rake test
 [Shrine]: https://github.com/janko-m/shrine
 [Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
+[responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
