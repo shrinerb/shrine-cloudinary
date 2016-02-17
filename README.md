@@ -126,8 +126,9 @@ user.avatar.metadata["cloudinary"] #=>
 # }
 ```
 
-If you're using the storage directly, `Shrine::Storage::Cloudinary#upload` will
-return this hash. This is especially useful for saving [responsive breakpoints].
+This is especially useful for saving [responsive breakpoints]. If you're using
+the storage directly, `Shrine::Storage::Cloudinary#upload` will return this
+hash.
 
 ### Large files
 
