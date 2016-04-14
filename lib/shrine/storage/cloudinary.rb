@@ -121,7 +121,11 @@ class Shrine
       end
 
       def update_id!(result, id)
-        id.gsub!(/#{File.extname(id)}$/, ".#{result.fetch("format")}") unless resource_type == "raw"
+        uploaded_id  = result.fetch("public_id")
+        uploaded_id  = uploaded_id.match("#{prefix}/").post_match if prefix
+        uploaded_id += ".#{result["format"]}" if result["format"]
+
+        id.replace(uploaded_id)
       end
 
       def update_metadata!(result, metadata)
