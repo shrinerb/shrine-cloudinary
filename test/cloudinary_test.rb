@@ -32,27 +32,27 @@ describe Shrine::Storage::Cloudinary do
   describe "#upload" do
     it "applies upload options" do
       @cloudinary.upload_options.update(width: 50, crop: :fit)
-      @cloudinary.upload(image, "foo.jpg", metadata = {})
+      uploaded_file = @uploader.upload(image)
 
-      assert_equal 50, metadata["width"]
+      assert_equal 50, uploaded_file.metadata["width"]
     end
 
     it "applies additional upload options from metadata" do
-      metadata = {"cloudinary" => {width: 50, crop: :fit}}
-      @cloudinary.upload(image, "foo.jpg", metadata)
+      @uploader.class.plugin :upload_options, cloudinary: {width: 50, crop: :fit}
+      uploaded_file = @uploader.upload(image)
 
-      assert_equal 50, metadata["width"]
+      assert_equal 50, uploaded_file.metadata["width"]
     end
 
     it "can upload remote files" do
-      uploaded_file = @uploader.upload(image, location: "foo.jpg")
+      uploaded_file = @uploader.upload(image)
       @cloudinary.upload(uploaded_file, "bar.jpg")
 
       assert @cloudinary.exists?("bar.jpg")
     end
 
     it "can upload other UploadedFiles" do
-      uploaded_file = @uploader.upload(image, location: "foo.jpg")
+      uploaded_file = @uploader.upload(image)
       def @cloudinary.remote?(io) false end
       @cloudinary.upload(uploaded_file, "bar.jpg")
 
@@ -60,19 +60,21 @@ describe Shrine::Storage::Cloudinary do
     end
 
     it "updates size, mime type and dimensions" do
-      @cloudinary.upload(image, "foo.jpg", metadata = {})
+      uploaded_file = @uploader.upload(image)
+      uploaded_file.metadata.clear
+      uploaded_file = @uploader.upload(uploaded_file)
 
-      assert_equal image.size, metadata["size"]
-      assert_equal "image/jpeg", metadata["mime_type"]
-      assert_equal 100, metadata["width"]
-      assert_equal 67, metadata["height"]
+      assert_equal image.size, uploaded_file.metadata["size"]
+      assert_equal "image/jpeg", uploaded_file.metadata["mime_type"]
+      assert_equal 100, uploaded_file.metadata["width"]
+      assert_equal 67, uploaded_file.metadata["height"]
     end
 
     it "stores data" do
-      @cloudinary = cloudinary(store_data: true)
-      @cloudinary.upload(image, "foo.jpg", metadata = {})
+      @cloudinary.instance_variable_set("@store_data", true)
+      uploaded_file = @uploader.upload(image)
 
-      refute_empty metadata["cloudinary"]
+      refute_empty uploaded_file.metadata["cloudinary"]
     end
 
     it "updates the id with the actual extension" do
