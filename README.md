@@ -193,12 +193,17 @@ Afterwards you can run the tests:
 $ bundle exec rake test
 ```
 
+## Inspiration
+
+This gem has been inspired by [cloudinary]'s CarrierWave integration.
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
 
 [Cloudinary]: http://cloudinary.com/
 [Shrine]: https://github.com/janko-m/shrine
+[cloudinary]: https://github.com/cloudinary/cloudinary_gem
 [Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
