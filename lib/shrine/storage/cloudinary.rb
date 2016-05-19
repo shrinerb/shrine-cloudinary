@@ -36,7 +36,7 @@ class Shrine
         uploader.explicit(public_id(id), resource_type: resource_type, type: type, **options)
       end
 
-      def move(io, id, metadata = {})
+      def move(io, id, shrine_metadata: {}, **upload_options)
         uploader.rename(io.storage.public_id(io.id), public_id(id), resource_type: resource_type)
       end
 
