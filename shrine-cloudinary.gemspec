@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.files        = Dir["README.md", "LICENSE.txt", "lib/**/*.rb", "shrine-cloudinary.gemspec"]
   gem.require_path = "lib"
 
-  gem.add_dependency "shrine", "~> 1.1"
+  gem.add_dependency "shrine", "~> 2.0"
   gem.add_dependency "cloudinary"
   gem.add_dependency "down", ">= 1.0.5"
 

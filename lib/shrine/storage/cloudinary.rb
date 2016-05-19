@@ -15,15 +15,15 @@ class Shrine
         @store_data = store_data
       end
 
-      def upload(io, id, metadata = {})
+      def upload(io, id, shrine_metadata: {}, **upload_options)
         options = {public_id: public_id(id)}
+        options.update(@upload_options)
         options.update(upload_options)
-        options.update(metadata.delete("cloudinary") || {})
 
         result = store(io, **options)
 
         update_id!(result, id)
-        update_metadata!(result, metadata)
+        update_metadata!(result, shrine_metadata)
 
         result
       end
@@ -70,8 +70,7 @@ class Shrine
         utils.cloudinary_url(path(id), resource_type: resource_type, type: type, **options)
       end
 
-      def clear!(confirm = nil, **options)
-        raise Shrine::Confirm unless confirm == :confirm
+      def clear!(**options)
         if prefix
           api.delete_resources_by_prefix(prefix, resource_type: resource_type, **options)
         else

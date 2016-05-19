@@ -14,7 +14,7 @@ describe Shrine::Storage::Cloudinary do
   end
 
   after do
-    @cloudinary.clear!(:confirm)
+    @cloudinary.clear!
   end
 
   it "passes the linter" do

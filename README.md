@@ -1,4 +1,4 @@
-# Shrine::Cloudinary
+# Shrine::Storage::Cloudinary
 
 Provides [Cloudinary] storage for [Shrine].
 
