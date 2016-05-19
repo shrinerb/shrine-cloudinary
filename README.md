@@ -1,6 +1,8 @@
 # Shrine::Storage::Cloudinary
 
-Provides [Cloudinary] storage for [Shrine].
+Provides [Cloudinary] storage for [Shrine]. Cloudinary provides storage with
+advanced on-the-fly processing (as well as processing on upload) for both
+images and videos, but can also store any other types of files.
 
 ## Installation
 
