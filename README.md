@@ -130,9 +130,31 @@ user.avatar.metadata["cloudinary"] #=>
 # }
 ```
 
-This is especially useful for saving [responsive breakpoints]. If you're using
-the storage directly, `Shrine::Storage::Cloudinary#upload` will return this
-hash.
+## Responsive breakpoints
+
+Cloudinary has a feature for automagically generating [responsive breakpoints]
+for images. In Shrine you can leverage this via `:upload_options` and
+`:store_data`:
+
+```rb
+Shrine::Storage::Cloudinary.new(
+  store_data: true,
+  upload_options: {responsive_breakpoints: {...}},
+  **cloudinary_options
+)
+```
+
+Now each upload will generate responsive breakpoints, and the result will be
+saved in the uploaded file's metadata hash under "cloudinary".
+
+If the `:responsive_breakpoints` value needs to be dynamic, you can use the
+upload_options plugin:
+
+```rb
+Shrine.plugin :upload_options, store: ->(io, context) do
+  {responsive_breakpoints: {...}}
+end
+```
 
 ### Large files
 
