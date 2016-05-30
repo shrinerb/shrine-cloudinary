@@ -33,11 +33,13 @@ class Shrine
       end
 
       def update(id, **options)
-        uploader.explicit(public_id(id), resource_type: resource_type, type: type, **options)
+        options = {resource_type: resource_type, type: type}.merge(options)
+        ::Cloudinary::Uploader.explicit(public_id(id), **options)
       end
 
       def move(io, id, shrine_metadata: {}, **upload_options)
-        uploader.rename(io.storage.public_id(io.id), public_id(id), resource_type: resource_type)
+        options = {resource_type: resource_type}
+        ::Cloudinary::Uploader.rename(io.storage.public_id(io.id), public_id(id), **options)
       end
 
       def movable?(io, id)
@@ -49,32 +51,37 @@ class Shrine
       end
 
       def read(id)
-        downloader.download(url(id))
+        ::Cloudinary::Downloader.download(url(id))
       end
 
       def exists?(id)
-        result = api.resources_by_ids([public_id(id)], resource_type: resource_type)
+        options = {resource_type: resource_type}
+        result = ::Cloudinary::Api.resources_by_ids([public_id(id)], **options)
         result.fetch("resources").any?
       end
 
       def delete(id)
-        uploader.destroy(public_id(id), resource_type: resource_type)
+        options = {resource_type: resource_type}
+        ::Cloudinary::Uploader.destroy(public_id(id), **options)
       end
 
       def multi_delete(ids)
         public_ids = ids.map { |id| public_id(id) }
-        api.delete_resources(public_ids, resource_type: resource_type)
+        options = {resource_type: resource_type}
+        ::Cloudinary::Api.delete_resources(public_ids, **options)
       end
 
       def url(id, **options)
-        utils.cloudinary_url(path(id), resource_type: resource_type, type: type, **options)
+        options = {resource_type: resource_type, type: type}.merge(options)
+        ::Cloudinary::Utils.cloudinary_url(path(id), **options)
       end
 
       def clear!(**options)
+        options = {resource_type: resource_type}.merge(options)
         if prefix
-          api.delete_resources_by_prefix(prefix, resource_type: resource_type, **options)
+          ::Cloudinary::Api.delete_resources_by_prefix(prefix, **options)
         else
-          api.delete_all_resources(resource_type: resource_type, **options)
+          ::Cloudinary::Api.delete_all_resources(**options)
         end
       end
 
@@ -96,13 +103,13 @@ class Shrine
 
       def store(io, chunk_size: nil, **options)
         if remote?(io)
-          uploader.upload(io.url, **options)
+          ::Cloudinary::Uploader.upload(io.url, **options)
         else
           io = io.download if io.is_a?(UploadedFile)
           if large?(io)
-            uploader.upload_large(io, chunk_size: chunk_size, **options)
+            ::Cloudinary::Uploader.upload_large(io, chunk_size: chunk_size, **options)
           else
-            uploader.upload(io, **options)
+            ::Cloudinary::Uploader.upload(io, **options)
           end
         end
       end
@@ -138,10 +145,6 @@ class Shrine
         retrieved_metadata.reject! { |key, value| value.nil? }
 
         metadata.update(retrieved_metadata)
-      end
-
-      [:Uploader, :Downloader, :Utils, :Api].each do |name|
-        define_method(name.downcase) { ::Cloudinary.const_get(name) }
       end
 
       MIME_TYPES = {
