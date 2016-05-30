@@ -197,7 +197,7 @@ with other storages:
 ```rb
 cloudinary = Shrine::Storage::Cloudinary.new
 # ...
-cloudinary.clear!(:confirm)
+cloudinary.clear!
 ```
 
 ## Contributing
