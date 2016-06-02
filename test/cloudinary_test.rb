@@ -21,11 +21,11 @@ describe Shrine::Storage::Cloudinary do
     Shrine::Storage::Linter.new(cloudinary).call(->{image})
   end
 
-  it "passes the linter with prefix" do
+  it "passes the linter with :prefix" do
     Shrine::Storage::Linter.new(cloudinary(prefix: "prefix")).call(->{image})
   end
 
-  it "passes the linter with resource type" do
+  it "passes the linter with :resource_type" do
     Shrine::Storage::Linter.new(cloudinary(resource_type: "raw")).call(->{image})
   end
 

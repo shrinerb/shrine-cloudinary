@@ -65,6 +65,14 @@ You can choose to store your files in a subdirectory with the `:prefix` option:
 Shrine::Storage::Cloudinary.new(prefix: "uploads")
 ```
 
+### Controlling access
+
+You can [control access] to uploaded files with the `:type` option:
+
+```rb
+Shrine::Storage::Cloudinary.new(type: "private") # upload, private or authenticated
+```
+
 ### Upload options
 
 If you want some [Cloudinary options] to be applied to all uploads, you can
@@ -240,3 +248,4 @@ This gem has been inspired by [cloudinary]'s CarrierWave integration.
 [explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit
 [direct unsigned uploads]: http://cloudinary.com/blog/direct_upload_made_easy_from_browser_or_mobile_app_to_the_cloud
 [demo]: /demo
+[control access]: http://cloudinary.com/documentation/upload_images#control_access_to_images
