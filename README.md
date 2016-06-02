@@ -39,7 +39,7 @@ Shrine.storages[:store] = Shrine::Storage::Cloudinary.new
 Cloudinary supports uploading files directly to their service, thus bypassing
 your application. The easiest way to do that is to setup [direct unsigned
 uploads]. Follow the linked blog post for instructions, and see the [demo] app
-for a complete implementation.
+for a complete implementation using shrine-cloudinary.
 
 ### Copying
 
@@ -79,7 +79,7 @@ If you want some [Cloudinary options] to be applied to all uploads, you can
 specify `:upload_options`:
 
 ```rb
-Shrine::Storage::Cloudinary.new(upload_options: {type: "authenticated"})
+Shrine::Storage::Cloudinary.new(upload_options: {backup: true})
 ```
 
 You can also apply upload options dynamically per upload using the
@@ -233,7 +233,7 @@ $ bundle exec rake test
 
 ## Inspiration
 
-This gem has been inspired by [cloudinary]'s CarrierWave integration.
+This gem has been inspired by Cloudinary's [CarrierWave integration].
 
 ## License
 
@@ -241,7 +241,7 @@ This gem has been inspired by [cloudinary]'s CarrierWave integration.
 
 [Cloudinary]: http://cloudinary.com/
 [Shrine]: https://github.com/janko-m/shrine
-[cloudinary]: https://github.com/cloudinary/cloudinary_gem
+[CarrierWave integration]: https://github.com/cloudinary/cloudinary_gem
 [Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
