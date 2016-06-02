@@ -1,0 +1,56 @@
+<h1><%= @album.name %></h1>
+
+<div class="form-group">
+  <label>Select photos</label>
+  <input type="file" name="file" multiple>
+</div>
+
+<form action="/album" method="post">
+  <input type="hidden" name="_method" value="put">
+  <ul class="list-unstyled">
+    <% @album.photos.each_with_index do |photo, idx| %>
+      <%= partial("photo", locals: {photo: photo, idx: idx}) %>
+    <% end %>
+  </ul>
+  <input type="submit" value="Save" class="btn btn-primary">
+</form>
+
+<script>
+  var presetName = '<%= ENV.fetch("CLOUDINARY_PRESET_NAME") %>'
+  var cloudName = '<%= ENV.fetch("CLOUDINARY_CLOUD_NAME") %>'
+
+  $('input[type=file]')
+    .unsigned_cloudinary_upload(
+      presetName,
+      {cloud_name: cloudName, folder: 'cache'},
+      {multiple: true}
+    )
+    .bind('fileuploadadd', function(e, data) {
+      data.progressBar = $('<div class="progress" style="width: 300px"><div class="progress-bar"></div></div>').insertAfter(".form-group");
+    })
+    .bind('fileuploadprogress', function(e, data) {
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      var percentage = progress.toString() + '%'
+      data.progressBar.find(".progress-bar").css("width", percentage).html(percentage);
+    })
+    .bind('fileuploaddone', function(e, data) {
+      data.progressBar.remove();
+
+      var mime_types = JSON.parse('<%= Shrine::Storage::Cloudinary::MIME_TYPES.to_json %>');
+      var file = {
+        id: data.result['public_id'].match(/cache\/(.+)/)[1] + '.' + data.result['format'],
+        storage: 'cache',
+        metadata: {
+          size: data.result['bytes'],
+          filename: data.files[0].name.match(/[^\/\\]*$/)[0], // IE returns full path
+          mime_type: mime_types[data.result['format']],
+        }
+      };
+      var data = {photo: {image: JSON.stringify(file)}};
+
+      console.log(file)
+
+      $.ajax("/album/photos", {method: 'POST', data: data})
+        .done(function(data) { $("ul").append(data) })
+    })
+</script>

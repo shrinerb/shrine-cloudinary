@@ -34,6 +34,13 @@ require "shrine/storage/cloudinary"
 Shrine.storages[:store] = Shrine::Storage::Cloudinary.new
 ```
 
+### Direct uploads
+
+Cloudinary supports uploading files directly to their service, thus bypassing
+your application. The easiest way to do that is to setup [direct unsigned
+uploads]. Follow the linked blog post for instructions, and see the [demo] app
+for a complete implementation.
+
 ### Copying
 
 If you're using storage as cache where files are accessible over internet,
@@ -41,7 +48,7 @@ moving the cached file to Cloudinary storage will not require another upload.
 Instead only the file URL will be passed to Cloudinary, then Cloudinary will
 internally download it and store the file.
 
-### Videos and Raw
+### Images, Videos or Raw
 
 The storage defaults the resource type to "image", but you can change that
 by passing the `:resource_type` option:
@@ -90,8 +97,7 @@ end
 You can pass transformation options to the URLs:
 
 ```rb
-user.avatar_url(width: 100, height: 100)
-user.avatar_url(width: 0.2, crop: :scale)
+user.avatar_url(width: 100, height: 100, crop: :fit) # :crop is mandatory here
 ```
 
 See [Rails image manipulation] for all URL options you can pass in.
@@ -232,3 +238,5 @@ This gem has been inspired by [cloudinary]'s CarrierWave integration.
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
 [explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit
+[direct unsigned uploads]: http://cloudinary.com/blog/direct_upload_made_easy_from_browser_or_mobile_app_to_the_cloud
+[demo]: /demo
