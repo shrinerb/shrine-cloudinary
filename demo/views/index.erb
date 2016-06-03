@@ -1,56 +1,49 @@
 <h1><%= @album.name %></h1>
 
-<div class="form-group">
-  <label>Select photos</label>
-  <input type="file" name="file" multiple>
-</div>
-
 <form action="/album" method="post">
   <input type="hidden" name="_method" value="put">
+  <%= csrf_tag %>
   <ul class="list-unstyled">
     <% @album.photos.each_with_index do |photo, idx| %>
       <%= partial("photo", locals: {photo: photo, idx: idx}) %>
     <% end %>
   </ul>
-  <input type="submit" value="Save" class="btn btn-primary">
+  <input type="submit" value="Save" class="btn btn-default">
+  <a href="#" class="btn btn-primary file-upload">Upload photos</a>
 </form>
 
 <script>
-  var presetName = '<%= ENV.fetch("CLOUDINARY_PRESET_NAME") %>'
-  var cloudName = '<%= ENV.fetch("CLOUDINARY_CLOUD_NAME") %>'
+  var mime_types = JSON.parse('<%= Shrine::Storage::Cloudinary::MIME_TYPES.to_json %>');
 
-  $('input[type=file]')
-    .unsigned_cloudinary_upload(
-      presetName,
-      {cloud_name: cloudName, folder: 'cache'},
-      {multiple: true}
-    )
-    .bind('fileuploadadd', function(e, data) {
-      data.progressBar = $('<div class="progress" style="width: 300px"><div class="progress-bar"></div></div>').insertAfter(".form-group");
-    })
-    .bind('fileuploadprogress', function(e, data) {
-      var progress = parseInt(data.loaded / data.total * 100, 10);
-      var percentage = progress.toString() + '%'
-      data.progressBar.find(".progress-bar").css("width", percentage).html(percentage);
-    })
-    .bind('fileuploaddone', function(e, data) {
-      data.progressBar.remove();
-
-      var mime_types = JSON.parse('<%= Shrine::Storage::Cloudinary::MIME_TYPES.to_json %>');
-      var file = {
-        id: data.result['public_id'].match(/cache\/(.+)/)[1] + '.' + data.result['format'],
-        storage: 'cache',
-        metadata: {
-          size: data.result['bytes'],
-          filename: data.files[0].name.match(/[^\/\\]*$/)[0], // IE returns full path
-          mime_type: mime_types[data.result['format']],
+  $(".file-upload").on("click", function(e) {
+    cloudinary.openUploadWidget({
+      cloud_name:    '<%= ENV.fetch("CLOUDINARY_CLOUD_NAME") %>',
+      upload_preset: '<%= ENV.fetch("CLOUDINARY_PRESET_NAME") %>',
+      folder:        'cache',
+      multiple:      true,
+      eager:         [{width: 300, height: 300, crop: "fit"}],
+    }, function(error, result) {
+      var files = result.map(function(data) {
+        return {
+          id: data['public_id'].match(/cache\/(.+)/)[1] + '.' + data['format'],
+          storage: 'cache',
+          metadata: {
+            size: data['bytes'],
+            filename: data['original_filename'] + '.' + data['format'],
+            mime_type: mime_types[data['format']]
+          }
         }
-      };
-      var data = {photo: {image: JSON.stringify(file)}};
+      });
 
-      console.log(file)
+      var data = {
+        photos: files.map(function(file) {
+          return {image: JSON.stringify(file)}
+        }),
+        _csrf: $("input[name=_csrf]").val(),
+      };
 
       $.ajax("/album/photos", {method: 'POST', data: data})
-        .done(function(data) { $("ul").append(data) })
-    })
+        .done(function(data) { $("ul").append(data) });
+    });
+  });
 </script>

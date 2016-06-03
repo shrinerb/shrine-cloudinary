@@ -5,13 +5,18 @@ require "./models/album"
 require "./models/photo"
 
 class CloudinaryDemo < Roda
-  plugin :all_verbs
-  plugin :indifferent_params
-  plugin :render
-  plugin :partials
   plugin :static, [*`ls public`.split("\n").map{|f|"/#{f}"}]
 
+  plugin :render
+  plugin :partials
+
   use Rack::MethodOverride
+  plugin :all_verbs
+
+  use Rack::Session::Cookie, secret: "secret"
+  plugin :csrf, raise: true
+
+  plugin :indifferent_params
 
   route do |r|
     @album = Album.first || Album.create(name: "My Album")
@@ -26,8 +31,10 @@ class CloudinaryDemo < Roda
     end
 
     r.post "album/photos" do
-      photo = @album.add_photo(params[:photo])
-      partial("photo", locals: {photo: photo, idx: @album.photos.count})
+      params[:photos].map do |_, attrs|
+        photo = @album.add_photo(attrs)
+        partial("photo", locals: {photo: photo, idx: @album.photos.count})
+      end.join("\n")
     end
   end
 end

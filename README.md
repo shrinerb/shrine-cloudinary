@@ -2,9 +2,8 @@
 
 Provides [Cloudinary] storage for [Shrine].
 
-Cloudinary provides storage with advanced on-the-fly processing (as well as
-processing on upload) for both images and videos, but can also store any other
-types of files.
+Cloudinary provides storage and advanced processing for images and videos, both
+on-demand and on upload.
 
 ## Installation
 
