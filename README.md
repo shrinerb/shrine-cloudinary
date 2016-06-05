@@ -13,32 +13,62 @@ gem "shrine-cloudinary"
 
 ## Usage
 
-First you need to configure the Cloudinary gem:
+You'll typically want to upload photos directly to Cloudinary, so your setup
+might look like this:
 
 ```rb
 require "cloudinary"
+require "shrine/storage/cloudinary"
 
 Cloudinary.config(
   cloud_name: "...",
   api_key:    "...",
   api_secret: "...",
 )
-```
 
-You can now initialize your storage:
-
-```rb
-require "shrine/storage/cloudinary"
-
-Shrine.storages[:store] = Shrine::Storage::Cloudinary.new
+Shrine.storages = {
+  cache: Shrine::Storage::Cloudinary.new(prefix: "cache"), # for direct uploads
+  store: Shrine::Storage::Cloudinary.new(prefix: "store"),
+}
 ```
 
 ### Direct uploads
 
-Cloudinary supports uploading files directly to their service, thus bypassing
-your application. The easiest way to do that is to setup [direct unsigned
-uploads]. Follow the linked blog post for instructions, and see the [demo] app
-for a complete implementation using shrine-cloudinary.
+Cloudinary supports uploading files directly to their service, freeing your
+application from accepting file uploads. There are three ways in which you
+can do direct uploads:
+
+* [unsigned uploads using the widget](http://cloudinary.com/documentation/upload_widget)
+* [unsigned uploads using jQuery](http://cloudinary.com/blog/direct_upload_made_easy_from_browser_or_mobile_app_to_the_cloud)
+* [signed uploads via jQuery](http://cloudinary.com/documentation/jquery_image_upload)
+
+The first one is the simplest, you can see the [demo] app with complete
+implementation using shrine-cloudinary. Unsigned uploads don't require
+communicating with the server, you just need to set up an "upload preset".
+
+If you would prefer that the server controlls who is allowed to upload,
+shrine-cloudinary also supports generating presigns, which works with the
+direct_upload plugin in the same way that S3 does. When rendering on the server
+side, you can generate a presign inline:
+
+```erb
+<input name="file" type="file"
+   class="cloudinary-fileupload" data-cloudinary-field="image_id"
+   data-form-data="<%= Shrine.storages[:cache].presign.fields.to_json %>" ></input>
+```
+
+Alternatively you can add an endpoint to your app which can generate presigns
+on request, which is suitable for apps where templates are rendered on the
+client-side (see [direct_upload] documentation):
+
+```rb
+Shrine.plugin :direct_upload, presign: true
+```
+```rb
+Rails.application.routes.draw do
+  mount ImageUploader::UploadEndpoint => "/attachments/images"
+end
+```
 
 ### Copying
 
@@ -245,6 +275,6 @@ This gem has been inspired by Cloudinary's [CarrierWave integration].
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
 [explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit
-[direct unsigned uploads]: http://cloudinary.com/blog/direct_upload_made_easy_from_browser_or_mobile_app_to_the_cloud
 [demo]: /demo
 [control access]: http://cloudinary.com/documentation/upload_images#control_access_to_images
+[direct_upload]: http://shrinerb.com/rdoc/classes/Shrine/Plugins/DirectUpload.html

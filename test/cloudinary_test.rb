@@ -127,4 +127,26 @@ describe Shrine::Storage::Cloudinary do
       assert_includes cloudinary.url("foo.mp4"), "video"
     end
   end
+
+  describe "#presign" do
+    it "returns information necessary for direct uploads" do
+      @cloudinary = cloudinary(prefix: "cache")
+      presign = @cloudinary.presign(id = "image.jpg")
+
+      RestClient.post(presign.url, file: image, **presign.fields)
+
+      assert @cloudinary.exists?(id)
+    end
+
+    it "doesn't require the id" do
+      @cloudinary = cloudinary(prefix: "cache")
+      presign = @cloudinary.presign
+
+      response = RestClient.post(presign.url, file: image, **presign.fields)
+      response = JSON.parse(response)
+      id = "#{response["public_id"]}.#{response["format"]}"[/cache\/(.+)/, 1]
+
+      assert @cloudinary.exists?(id)
+    end
+  end
 end

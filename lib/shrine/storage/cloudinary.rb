@@ -80,6 +80,20 @@ class Shrine
         end
       end
 
+      def presign(id = nil, **options)
+        upload_options.update(@upload_options)
+        upload_options.update(id ? {public_id: public_id(id)} : {folder: prefix})
+
+        fields = ::Cloudinary::Uploader.build_upload_params(upload_options.merge(options))
+        fields.reject! { |key, value| value.nil? || value == "" }
+        fields[:signature] = ::Cloudinary::Utils.api_sign_request(fields, ::Cloudinary.config.api_secret)
+        fields[:api_key] = ::Cloudinary.config.api_key
+
+        url = ::Cloudinary::Utils.cloudinary_api_url("upload", default_options)
+
+        Struct.new(:url, :fields).new(url, fields)
+      end
+
       protected
 
       def public_id(id)
