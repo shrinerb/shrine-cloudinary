@@ -69,7 +69,7 @@ class Shrine
       end
 
       def url(id, **options)
-        ::Cloudinary::Utils.cloudinary_url(path(id), default_options.merge(options))
+        ::Cloudinary::Utils.cloudinary_url(path(id), default_options.merge(secure: true, **options))
       end
 
       def clear!(**options)
