@@ -1,7 +1,7 @@
 # Shrine & Cloudinary Demo
 
-This is a Roda & Sequel demo app for integrating Cloudinary file uploads with
-Shrine.
+This is a demo app which integrates Cloudinary file uploads with Shrine using
+shrine-cloudinary.
 
 ## Requirements
 

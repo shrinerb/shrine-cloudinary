@@ -54,7 +54,7 @@ side, you can generate a presign inline:
 ```erb
 <input name="file" type="file"
    class="cloudinary-fileupload" data-cloudinary-field="image_id"
-   data-form-data="<%= Shrine.storages[:cache].presign.fields.to_json %>" ></input>
+   data-form-data="<%= Shrine.storages[:cache].presign.fields.to_json %>">
 ```
 
 Alternatively you can add an endpoint to your app which can generate presigns
@@ -271,7 +271,7 @@ This gem has been inspired by Cloudinary's [CarrierWave integration].
 [Cloudinary]: http://cloudinary.com/
 [Shrine]: https://github.com/janko-m/shrine
 [CarrierWave integration]: https://github.com/cloudinary/cloudinary_gem
-[Cloudinary options]: http://cloudinary.com/documentation/upload_images#remote_upload
+[Cloudinary options]: http://cloudinary.com/documentation/image_upload_api_reference#upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
 [explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit
