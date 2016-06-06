@@ -21,6 +21,7 @@
       upload_preset: '<%= ENV.fetch("CLOUDINARY_PRESET_NAME") %>',
       folder:        'cache',
       multiple:      true,
+      max_files:     10,
       eager:         [{width: 300, height: 300, crop: "fit"}],
     }, function(error, result) {
       var files = result.map(function(data) {
