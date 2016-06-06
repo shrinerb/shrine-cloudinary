@@ -81,8 +81,8 @@ class Shrine
       end
 
       def presign(id = nil, **options)
+        upload_options = id ? {public_id: public_id(id)} : {folder: prefix}
         upload_options.update(@upload_options)
-        upload_options.update(id ? {public_id: public_id(id)} : {folder: prefix})
 
         fields = ::Cloudinary::Uploader.build_upload_params(upload_options.merge(options))
         fields.reject! { |key, value| value.nil? || value == "" }
