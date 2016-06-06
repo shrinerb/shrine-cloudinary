@@ -114,12 +114,24 @@ class Shrine
         if remote?(io)
           ::Cloudinary::Uploader.upload(io.url, **options)
         else
-          io = io.download if io.is_a?(UploadedFile)
-          if large?(io)
-            ::Cloudinary::Uploader.upload_large(io, chunk_size: chunk_size, **options)
-          else
-            ::Cloudinary::Uploader.upload(io, **options)
+          to_file(io) do |file|
+            if large?(file)
+              ::Cloudinary::Uploader.upload_large(file, chunk_size: chunk_size, **options)
+            else
+              ::Cloudinary::Uploader.upload(file, **options)
+            end
           end
+        end
+      end
+
+      def to_file(io)
+        if io.is_a?(UploadedFile)
+          file = io.download
+          result = yield file
+          file.delete
+          result
+        else
+          yield io
         end
       end
 
