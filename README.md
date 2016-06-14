@@ -3,7 +3,7 @@
 Provides [Cloudinary] storage for [Shrine].
 
 Cloudinary provides storage and advanced processing for images and videos, both
-on-demand and on upload.
+on-demand and on upload, and an HTML widget for direct uploads.
 
 ## Installation
 
@@ -134,7 +134,7 @@ end
 You can pass transformation options to the URLs:
 
 ```rb
-user.avatar_url(width: 100, height: 100, crop: :fit) # :crop is mandatory here
+user.avatar_url(width: 100, height: 100, crop: :fit) # :crop is mandatory with :width or :height
 ```
 
 See [Rails image manipulation] for all URL options you can pass in.
