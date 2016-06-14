@@ -5,7 +5,7 @@ require "./models/album"
 require "./models/photo"
 
 class CloudinaryDemo < Roda
-  plugin :static, [*`ls public`.split("\n").map{|f|"/#{f}"}]
+  plugin :public
 
   plugin :render
   plugin :partials
@@ -19,6 +19,8 @@ class CloudinaryDemo < Roda
   plugin :indifferent_params
 
   route do |r|
+    r.public
+
     @album = Album.first || Album.create(name: "My Album")
 
     r.root do
