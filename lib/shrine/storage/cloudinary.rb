@@ -114,24 +114,12 @@ class Shrine
         if remote?(io)
           ::Cloudinary::Uploader.upload(io.url, **options)
         else
-          to_file(io) do |file|
-            if large?(file)
-              ::Cloudinary::Uploader.upload_large(file, chunk_size: chunk_size, **options)
-            else
-              ::Cloudinary::Uploader.upload(file, **options)
-            end
+          make_rest_client_recognize_as_file!(io)
+          if large?(io)
+            ::Cloudinary::Uploader.upload_large(io, chunk_size: chunk_size, **options)
+          else
+            ::Cloudinary::Uploader.upload(io, **options)
           end
-        end
-      end
-
-      def to_file(io)
-        if io.is_a?(UploadedFile)
-          file = io.download
-          result = yield file
-          file.delete
-          result
-        else
-          yield io
         end
       end
 
@@ -145,6 +133,11 @@ class Shrine
 
       def default_options
         {resource_type: resource_type, type: type}
+      end
+
+      def make_rest_client_recognize_as_file!(io)
+        io.instance_eval { def path; "file"; end } unless io.respond_to?(:path)
+        io.instance_eval { def original_filename; "file"; end } if io.respond_to?(:original_filename)
       end
 
       def update_id!(result, id)

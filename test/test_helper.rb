@@ -6,6 +6,9 @@ require "minitest/pride"
 require "shrine/storage/cloudinary"
 require "dotenv"
 
+require "stringio"
+require "forwardable"
+
 Dotenv.load!
 
 Cloudinary.config(
@@ -14,8 +17,17 @@ Cloudinary.config(
   api_secret: ENV.fetch("CLOUDINARY_API_SECRET"),
 )
 
+class FakeIO
+  def initialize(content)
+    @io = StringIO.new(content)
+  end
+
+  extend Forwardable
+  delegate Shrine::IO_METHODS.keys => :@io
+end
+
 class Minitest::Test
   def image
-    File.open("test/fixtures/image.jpg")
+    FakeIO.new(File.read("test/fixtures/image.jpg"))
   end
 end
