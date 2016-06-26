@@ -3,7 +3,8 @@
 Provides [Cloudinary] storage for [Shrine].
 
 Cloudinary provides storage and advanced processing for images and videos, both
-on-demand and on upload, and an HTML widget for direct uploads.
+on-demand and on upload, automatic and intelligent responsive breakpoints, and
+an HTML widget for direct uploads.
 
 ## Installation
 
