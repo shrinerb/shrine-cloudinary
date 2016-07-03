@@ -1,3 +1,3 @@
 require "dotenv"
 
-Dotenv.load!
+Dotenv.load!("../.env")
