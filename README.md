@@ -136,6 +136,7 @@ You can pass transformation options to the URLs:
 
 ```rb
 user.avatar_url(width: 100, height: 100, crop: :fit) # :crop is mandatory with :width or :height
+#=> "https://res.cloudinary.com/myapp/image/upload/w_100,h_100,c_fit/nature.jpg"
 ```
 
 See [Rails image manipulation] for all URL options you can pass in.
