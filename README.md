@@ -130,6 +130,12 @@ class MyUploader < Shrine
 end
 ```
 
+Finally, you can pass upload options when using the uploader directly:
+
+```rb
+uploader.upload(file, upload_options: {format: "png"})
+```
+
 ### URLs
 
 You can pass transformation options to the URLs:
