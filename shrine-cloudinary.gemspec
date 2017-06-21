@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name          = "shrine-cloudinary"
-  gem.version       = "0.4.2"
+  gem.version       = "0.5.0"
 
   gem.required_ruby_version = ">= 2.1"
 
