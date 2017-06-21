@@ -30,10 +30,6 @@ class Shrine
         result
       end
 
-      def download(id)
-        Down.download(url(id))
-      end
-
       def update(id, **options)
         ::Cloudinary::Uploader.explicit(public_id(id), default_options.merge(options))
       end
@@ -48,10 +44,6 @@ class Shrine
 
       def open(id)
         Down.open(url(id))
-      end
-
-      def read(id)
-        ::Cloudinary::Downloader.download(url(id), default_options)
       end
 
       def exists?(id)
