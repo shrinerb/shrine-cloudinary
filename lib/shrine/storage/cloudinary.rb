@@ -55,11 +55,6 @@ class Shrine
         ::Cloudinary::Uploader.destroy(public_id(id), default_options)
       end
 
-      def multi_delete(ids)
-        public_ids = ids.map { |id| public_id(id) }
-        ::Cloudinary::Api.delete_resources(public_ids, default_options)
-      end
-
       def url(id, **options)
         ::Cloudinary::Utils.cloudinary_url(path(id), default_options.merge(secure: true, **options))
       end
