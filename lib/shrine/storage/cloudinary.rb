@@ -103,6 +103,7 @@ class Shrine
         else
           make_rest_client_recognize_as_file!(io)
           if large?(io)
+            io.instance_eval { def match(*); false; end } # https://github.com/cloudinary/cloudinary_gem/pull/260
             ::Cloudinary::Uploader.upload_large(io, chunk_size: chunk_size, **options)
           else
             ::Cloudinary::Uploader.upload(io, **options)
