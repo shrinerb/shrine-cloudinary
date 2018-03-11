@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.1"
 
   gem.summary      = "Provides Cloudinary storage for Shrine."
-  gem.homepage     = "https://github.com/janko-m/shrine-cloudinary"
+  gem.homepage     = "https://github.com/shrinerb/shrine-cloudinary"
   gem.authors      = ["Janko Marohnić"]
   gem.email        = ["janko.marohnic@gmail.com"]
   gem.license      = "MIT"

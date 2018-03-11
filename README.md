@@ -292,7 +292,7 @@ This gem has been inspired by Cloudinary's [CarrierWave integration].
 [MIT](http://opensource.org/licenses/MIT)
 
 [Cloudinary]: http://cloudinary.com/
-[Shrine]: https://github.com/janko-m/shrine
+[Shrine]: https://github.com/shrinerb/shrine
 [CarrierWave integration]: https://github.com/cloudinary/cloudinary_gem
 [Cloudinary options]: http://cloudinary.com/documentation/image_upload_api_reference#upload
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
