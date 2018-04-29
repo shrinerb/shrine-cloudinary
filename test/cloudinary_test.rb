@@ -99,6 +99,14 @@ describe Shrine::Storage::Cloudinary do
     end
   end
 
+  describe "#open" do
+    it "accepts additional parameters" do
+      @cloudinary.upload(image, id = "foo")
+      io = @cloudinary.open(id, rewindable: false)
+      assert_raises(IOError) { io.rewind }
+    end
+  end
+
   describe "#update" do
     it "updates the data of the file" do
       @cloudinary.upload(image, id = "foo.jpg")

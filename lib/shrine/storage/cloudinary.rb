@@ -1,6 +1,6 @@
 require "shrine"
 require "cloudinary"
-require "down"
+require "down/http"
 
 class Shrine
   module Storage
@@ -42,8 +42,8 @@ class Shrine
         io.is_a?(UploadedFile) && io.storage.is_a?(Storage::Cloudinary)
       end
 
-      def open(id)
-        Down.open(url(id))
+      def open(id, **options)
+        Down::Http.open(url(id), **options)
       end
 
       def exists?(id)

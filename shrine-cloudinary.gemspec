@@ -15,7 +15,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "shrine", "~> 2.2"
   gem.add_dependency "cloudinary", "< 2"
-  gem.add_dependency "down", ">= 2.3.3"
+  gem.add_dependency "down", "~> 4.4"
+  gem.add_dependency "http", "~> 3.2"
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest"
