@@ -142,7 +142,7 @@ describe Shrine::Storage::Cloudinary do
       presign = @cloudinary.presign(id = "image.jpg")
 
       file = image.tap { |o| o.instance_eval { def path; "file"; end } }
-      RestClient.post(presign.url, file: file, **presign.fields)
+      RestClient.post(presign[:url], file: file, **presign[:fields])
 
       assert @cloudinary.exists?(id)
     end
@@ -152,7 +152,7 @@ describe Shrine::Storage::Cloudinary do
       presign = @cloudinary.presign
 
       file = image.tap { |o| o.instance_eval { def path; "file"; end } }
-      response = RestClient.post(presign.url, file: file, **presign.fields)
+      response = RestClient.post(presign[:url], file: file, **presign[:fields])
       response = JSON.parse(response)
       id = "#{response["public_id"]}.#{response["format"]}"[/cache\/(.+)/, 1]
 

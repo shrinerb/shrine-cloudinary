@@ -17,7 +17,7 @@ class Shrine
       end
 
       def upload(io, id, shrine_metadata: {}, **upload_options)
-        options = {public_id: public_id(id)}
+        options = { public_id: public_id(id) }
         options.update(default_options)
         options.update(@upload_options)
         options.update(upload_options)
@@ -68,7 +68,7 @@ class Shrine
       end
 
       def presign(id = nil, **options)
-        upload_options = id ? {public_id: public_id(id)} : {folder: prefix}
+        upload_options = id ? { public_id: public_id(id) } : { folder: prefix }
         upload_options.update(@upload_options)
 
         fields = ::Cloudinary::Uploader.build_upload_params(upload_options.merge(options))
@@ -78,7 +78,7 @@ class Shrine
 
         url = ::Cloudinary::Utils.cloudinary_api_url("upload", default_options)
 
-        Struct.new(:url, :fields).new(url, fields)
+        { method: :post, url: url, fields: fields }
       end
 
       protected
@@ -120,7 +120,7 @@ class Shrine
       end
 
       def default_options
-        {resource_type: resource_type, type: type}
+        { resource_type: resource_type, type: type }
       end
 
       def make_rest_client_recognize_as_file!(io)
