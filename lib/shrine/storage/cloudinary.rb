@@ -43,7 +43,7 @@ class Shrine
       end
 
       def open(id, **options)
-        Down::Http.open(url(id), **options)
+        Down::Http.open(url(id, sign_url: true), **options)
       end
 
       def exists?(id)

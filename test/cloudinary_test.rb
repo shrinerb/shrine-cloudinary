@@ -105,6 +105,11 @@ describe Shrine::Storage::Cloudinary do
       io = @cloudinary.open(id, rewindable: false)
       assert_raises(IOError) { io.rewind }
     end
+
+    it "works with private files" do
+      @cloudinary.upload(image, id = "foo", type: "private")
+      @cloudinary.open(id)
+    end
   end
 
   describe "#update" do
