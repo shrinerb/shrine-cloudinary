@@ -18,9 +18,8 @@ class Shrine
 
       def upload(io, id, shrine_metadata: {}, **upload_options)
         options = { public_id: public_id(id) }
-        options.update(default_options)
-        options.update(@upload_options)
-        options.update(upload_options)
+        options.merge!(@upload_options)
+        options.merge!(upload_options)
 
         result = store(io, **options)
 
@@ -31,52 +30,47 @@ class Shrine
       end
 
       def update(id, **options)
-        ::Cloudinary::Uploader.explicit(public_id(id), default_options.merge(options))
-      end
-
-      def move(io, id, shrine_metadata: {}, **upload_options)
-        ::Cloudinary::Uploader.rename(io.storage.public_id(io.id), public_id(id), default_options)
-      end
-
-      def movable?(io, id)
-        io.is_a?(UploadedFile) && io.storage.is_a?(Storage::Cloudinary)
+        uploader.explicit(public_id(id), **options)
       end
 
       def open(id, **options)
         Down::Http.open(url(id, sign_url: true), **options)
+      rescue Down::NotFound
+        raise Shrine::FileNotFound, "file #{id.inspect} not found on storage"
       end
 
       def exists?(id)
-        result = ::Cloudinary::Api.resources_by_ids([public_id(id)], default_options)
+        result = api.resources_by_ids([public_id(id)])
         result.fetch("resources").any?
       end
 
       def delete(id)
-        ::Cloudinary::Uploader.destroy(public_id(id), default_options)
+        uploader.destroy(public_id(id))
       end
 
       def url(id, **options)
-        ::Cloudinary::Utils.cloudinary_url(path(id), default_options.merge(secure: true, **options))
+        utils.cloudinary_url(path(id), secure: true, **options)
       end
 
       def clear!(**options)
         if prefix
-          ::Cloudinary::Api.delete_resources_by_prefix(prefix, default_options.merge(options))
+          api.delete_resources_by_prefix(prefix, **options)
         else
-          ::Cloudinary::Api.delete_all_resources(default_options.merge(options))
+          api.delete_all_resources(**options)
         end
       end
 
-      def presign(id = nil, **options)
-        upload_options = id ? { public_id: public_id(id) } : { folder: prefix }
-        upload_options.update(@upload_options)
+      def presign(id = nil, **presign_options)
+        options = id ? { public_id: public_id(id) } : { folder: prefix }
+        options.merge!(@upload_options)
+        options.merge!(presign_options)
 
-        fields = ::Cloudinary::Uploader.build_upload_params(upload_options.merge(options))
+        fields = ::Cloudinary::Uploader.build_upload_params(options)
         fields.reject! { |key, value| value.nil? || value == "" }
         fields[:signature] = ::Cloudinary::Utils.api_sign_request(fields, ::Cloudinary.config.api_secret)
-        fields[:api_key] = ::Cloudinary.config.api_key
+        fields[:api_key]   = ::Cloudinary.config.api_key
 
-        url = ::Cloudinary::Utils.cloudinary_api_url("upload", default_options)
+        url = utils.cloudinary_api_url("upload")
 
         { method: :post, url: url, fields: fields }
       end
@@ -99,17 +93,21 @@ class Shrine
 
       def store(io, chunk_size: nil, **options)
         if remote?(io)
-          ::Cloudinary::Uploader.upload(io.url, **options)
+          uploader.upload(io.url, **options)
         else
           make_rest_client_recognize_as_file!(io)
           if large?(io)
             io.instance_eval { def match(*); false; end } # https://github.com/cloudinary/cloudinary_gem/pull/260
-            ::Cloudinary::Uploader.upload_large(io, chunk_size: chunk_size, **options)
+            uploader.upload_large(io, chunk_size: chunk_size, **options)
           else
-            ::Cloudinary::Uploader.upload(io, **options)
+            uploader.upload(io, **options)
           end
         end
       end
+
+      def uploader; Delegator.new(::Cloudinary::Uploader, default_options); end
+      def api;      Delegator.new(::Cloudinary::Api,      default_options); end
+      def utils;    Delegator.new(::Cloudinary::Utils,    default_options); end
 
       def remote?(io)
         io.is_a?(UploadedFile) && io.url.to_s =~ /^ftp:|^https?:/
@@ -175,6 +173,23 @@ class Shrine
         "mpeg" => "video/mpeg",
         "avi"  => "video/x-msvideo",
       }
+
+      # Delegates each method call to the specified klass, but passing
+      # specified default options.
+      class Delegator
+        def initialize(klass, default_options)
+          @klass           = klass
+          @default_options = default_options
+        end
+
+        def method_missing(name, *args, **options, &block)
+          @klass.public_send(name, *args, **@default_options, **options, &block)
+        end
+
+        def respond_to_missing?(name, include_private = false)
+          @klass.respond_to?(name, include_private)
+        end
+      end
     end
   end
 end

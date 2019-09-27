@@ -29,47 +29,17 @@ Cloudinary.config(
 
 Shrine.storages = {
   cache: Shrine::Storage::Cloudinary.new(prefix: "cache"), # for direct uploads
-  store: Shrine::Storage::Cloudinary.new(prefix: "store"),
+  store: Shrine::Storage::Cloudinary.new,
 }
 ```
 
 ### Direct uploads
 
-Cloudinary supports uploading files directly to their service, freeing your
-application from accepting file uploads. There are three ways in which you
-can do direct uploads:
+The `Shrine::Storage::Cloudinary` class implements the `#presign` method, so it
+should work with Shrine's [presign_endpoint] plugin and Uppy's [AwsS3] plugin.
 
-* [unsigned uploads using the widget](http://cloudinary.com/documentation/upload_widget)
-* [unsigned uploads using jQuery](http://cloudinary.com/blog/direct_upload_made_easy_from_browser_or_mobile_app_to_the_cloud)
-* [signed uploads via jQuery](http://cloudinary.com/documentation/jquery_image_upload)
-
-The first one is the simplest, you can see the [demo] app with complete
-implementation using shrine-cloudinary. Unsigned uploads don't require
-communicating with the server, you just need to set up an "upload preset".
-
-If you would prefer that the server controlls who is allowed to upload,
-shrine-cloudinary also supports generating presigns, which works with the
-direct_upload plugin in the same way that S3 does. When rendering on the server
-side, you can generate a presign inline:
-
-```erb
-<input name="file" type="file"
-   class="cloudinary-fileupload" data-cloudinary-field="image_id"
-   data-form-data="<%= Shrine.storages[:cache].presign.fields.to_json %>">
-```
-
-Alternatively you can add an endpoint to your app which can generate presigns
-on request, which is suitable for apps where templates are rendered on the
-client-side (see [direct_upload] documentation):
-
-```rb
-Shrine.plugin :direct_upload, presign: true
-```
-```rb
-Rails.application.routes.draw do
-  mount ImageUploader::UploadEndpoint => "/attachments/images"
-end
-```
+If that doesn't work, you can always use Shrine's [upload_endpoint] plugin with
+Uppy's [XHRUpload] plugin.
 
 ### Copying
 
@@ -109,7 +79,7 @@ If you want some [Cloudinary options] to be applied to all uploads, you can
 specify `:upload_options`:
 
 ```rb
-Shrine::Storage::Cloudinary.new(upload_options: {backup: true})
+Shrine::Storage::Cloudinary.new(upload_options: { backup: true })
 ```
 
 You can also apply upload options dynamically per upload using the
@@ -122,8 +92,8 @@ class MyUploader < Shrine
     {
       format: "png",
       eager: [
-        {width: 500, height: 500, crop: :scale},
-        {width: 300, height: 300, crop: :crop, gravity: :south},
+        { width: 500, height: 500, crop: :scale },
+        { width: 300, height: 300, crop: :crop, gravity: :south },
       ]
     }
   end
@@ -133,7 +103,7 @@ end
 Finally, you can pass upload options when using the uploader directly:
 
 ```rb
-uploader.upload(file, upload_options: {format: "png"})
+uploader.upload(file, upload_options: { format: "png" })
 ```
 
 ### URLs
@@ -189,7 +159,7 @@ for images. In Shrine you can leverage this via `:upload_options` and
 
 ```rb
 Shrine::Storage::Cloudinary.new(
-  upload_options: {responsive_breakpoints: {...}},
+  upload_options: { responsive_breakpoints: {...} },
   store_data: true,
 )
 ```
@@ -218,7 +188,7 @@ If the `:responsive_breakpoints` value needs to be dynamic, you can use the
 
 ```rb
 Shrine.plugin :upload_options, store: -> (io, context) do
-  {responsive_breakpoints: {...}}
+  { responsive_breakpoints: {...} }
 end
 ```
 
@@ -238,8 +208,8 @@ The default chunk size is 20 MB, but you can change that by passing
 
 ```rb
 Shrine::Storage::Cloudinary.new(
-  large: 100*1024*1024                      # 100 MB
-  upload_options: {chunk_size: 5*1024*1204} # 5 MB
+  large: 100*1024*1024                        # 100 MB
+  upload_options: { chunk_size: 5*1024*1204 } # 5 MB
 )
 ```
 
@@ -298,6 +268,8 @@ This gem has been inspired by Cloudinary's [CarrierWave integration].
 [Rails image manipulation]: http://cloudinary.com/documentation/rails_image_manipulation
 [responsive breakpoints]: http://cloudinary.com/blog/introducing_intelligent_responsive_image_breakpoints_solutions
 [explicit API]: http://cloudinary.com/documentation/image_upload_api_reference#explicit
-[demo]: /demo
 [control access]: http://cloudinary.com/documentation/upload_images#control_access_to_images
-[direct_upload]: http://shrinerb.com/rdoc/classes/Shrine/Plugins/DirectUpload.html
+[presign_endpoint]: https://github.com/shrinerb/shrine/blob/master/doc/plugins/presign_endpoint.md#readme
+[upload_endpoint]: https://github.com/shrinerb/shrine/blob/master/doc/plugins/upload_endpoint.md#readme
+[AwsS3]: https://uppy.io/docs/aws-s3/
+[XHRUpload]: https://uppy.io/docs/xhr-upload/
