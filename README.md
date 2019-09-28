@@ -9,7 +9,7 @@ an HTML widget for direct uploads.
 ## Installation
 
 ```ruby
-gem "shrine-cloudinary"
+gem "shrine-cloudinary", "~> 1.1"
 ```
 
 ## Usage
