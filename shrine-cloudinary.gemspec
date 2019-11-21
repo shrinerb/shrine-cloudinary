@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.require_path = "lib"
 
   gem.add_dependency "shrine", ">= 3.0.0.rc", "< 4"
-  gem.add_dependency "cloudinary", "< 2"
+  gem.add_dependency "cloudinary", "~> 1.12"
   gem.add_dependency "down", "~> 5.0"
   gem.add_dependency "http", ">= 3.2", "< 5"
 

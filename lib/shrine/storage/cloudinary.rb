@@ -95,12 +95,12 @@ class Shrine
         if remote?(io)
           uploader.upload(io.url, **options)
         else
-          make_rest_client_recognize_as_file!(io)
-          if large?(io)
-            io.instance_eval { def match(*); false; end } # https://github.com/cloudinary/cloudinary_gem/pull/260
-            uploader.upload_large(io, chunk_size: chunk_size, **options)
-          else
-            uploader.upload(io, **options)
+          Shrine.with_file(io) do |file|
+            if large?(file)
+              uploader.upload_large(file, chunk_size: chunk_size, **options)
+            else
+              uploader.upload(file, **options)
+            end
           end
         end
       end
@@ -119,11 +119,6 @@ class Shrine
 
       def default_options
         { resource_type: resource_type, type: type }
-      end
-
-      def make_rest_client_recognize_as_file!(io)
-        io.instance_eval { def path; "file"; end } unless io.respond_to?(:path)
-        io.instance_eval { def original_filename; "file"; end } if io.respond_to?(:original_filename)
       end
 
       def update_id!(result, id)
